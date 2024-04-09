@@ -1,1 +1,38 @@
+name: HybridSearchChat
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run_hybrid_search:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Update pip and setuptools
+        run: |
+          python3 -m pip install --upgrade pip setuptools
+
+      - name: Install system dependencies
+        run: |
+          # Install system dependencies required for Python packages
+          sudo apt-get update
+          sudo apt-get install -y build-essential libssl-dev libffi-dev python3-dev
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install -r requirements.txt
+
+      - name: Run HybridSearchChat
+        run: python3 main.py
