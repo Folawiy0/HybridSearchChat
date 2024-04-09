@@ -1,5 +1,8 @@
-spacy==3.0.6
-langchain
-langchain-community
 langchain-sql-database
-langchain-openai
+langchain==1.0.0
+langchain-community==0.1.0
+langchain-openai==0.1.0
+tk==8.6.12
+openai==0.12.5
+sqlite==3.36.0
+spacy==3.2.1
