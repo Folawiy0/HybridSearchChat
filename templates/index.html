@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HYBRID CHAT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #chat-container {
+            width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #chat-history {
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        #query-input {
+            width: calc(100% - 100px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        #submit-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1 style="text-align: center;">HYBRID CHAT</h1>
+        <div id="chat-history"></div>
+        <input type="text" id="query-input" placeholder="Type your query here...">
+        <button id="submit-button" onclick="submitQuery()">Submit</button>
+    </div>
+
+    <script>
+        function submitQuery() {
+            var query = document.getElementById("query-input").value.trim();
+            if (query !== "") {
+                document.getElementById("chat-history").innerHTML += "<p>User: " + query + "</p>";
+                document.getElementById("query-input").value = "";
+                
+                fetch("/process_query", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: "query=" + encodeURIComponent(query)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data.response)) {
+                        var botResponse = "<p>Bot: The list of patients in the database is:</p>";
+                        botResponse += "<ul>";
+                        data.response.forEach(patient => {
+                            botResponse += "<li>" + patient + "</li>";
+                        });
+                        botResponse += "</ul>";
+                        document.getElementById("chat-history").innerHTML += botResponse;
+                    } else {
+                        document.getElementById("chat-history").innerHTML += "<p>Bot: " + data.response + "</p>";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
